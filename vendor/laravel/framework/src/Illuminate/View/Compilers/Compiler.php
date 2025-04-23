@@ -52,7 +52,6 @@ abstract class Compiler
      * @param  string  $basePath
      * @param  bool  $shouldCache
      * @param  string  $compiledExtension
-     * @return void
      *
      * @throws \InvalidArgumentException
      */
@@ -61,8 +60,8 @@ abstract class Compiler
         $cachePath,
         $basePath = '',
         $shouldCache = true,
-        $compiledExtension = 'php')
-    {
+        $compiledExtension = 'php',
+    ) {
         if (! $cachePath) {
             throw new InvalidArgumentException('Please provide a valid cache path.');
         }

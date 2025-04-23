@@ -37,7 +37,6 @@ class Attachment
      * Create a mail attachment.
      *
      * @param  \Closure  $resolver
-     * @return void
      */
     private function __construct(Closure $resolver)
     {
@@ -53,6 +52,17 @@ class Attachment
     public static function fromPath($path)
     {
         return new static(fn ($attachment, $pathStrategy) => $pathStrategy($path, $attachment));
+    }
+
+    /**
+     * Create a mail attachment from a URL.
+     *
+     * @param  string  $url
+     * @return static
+     */
+    public static function fromUrl($url)
+    {
+        return static::fromPath($url);
     }
 
     /**
