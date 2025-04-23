@@ -66,5 +66,5 @@ Route::get('/data-siswa', [DashboardController::class, 'dataSiswa'])->name('data
 Route::get('/laporan', [DashboardController::class, 'laporan'])->name('laporan');
 
 
-Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
-Route::get('/siswa/{id}', [SiswaController::class, 'show'])->name('siswa.show');
+// Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+// Route::get('/siswa/{id}', [SiswaController::class, 'show'])->name('siswa.show');
