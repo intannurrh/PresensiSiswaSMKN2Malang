@@ -11,3 +11,6 @@ Route::get('/1', function () {
 Route::get('/2', function () {
     return view('guru.laporan');
 });
+Route::get('/3', function () {
+    return view('ortu.dashboard');
+});
