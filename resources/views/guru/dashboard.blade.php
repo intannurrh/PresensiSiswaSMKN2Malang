@@ -1,4 +1,4 @@
-@extends('layout.admin')
+@extends('layout.guru')
 
 @section('content')
 <section class="dashboard-section" id="dashboard">

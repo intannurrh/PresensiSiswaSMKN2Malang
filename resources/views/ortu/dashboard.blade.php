@@ -1,29 +1,17 @@
 @extends('layout.ortu')
 
 @section('content')
-    <section class="dashboard-wrapper">
-        <h1 class="dashboard-title">Dashboard Orang Tua</h1>
+    <div class="card">
+        <h2>Selamat datang, Orang Tua</h2>
+        <p>Anak Anda hadir hari ini pukul <strong>07:05</strong></p>
+    </div>
 
-        <section class="cards">
-            <div class="card">
-                <i class="fas fa-user-clock"></i>
-                <h2>Presensi Harian</h2>
-                <p>Lihat jam masuk dan pulang anak Anda setiap hari</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-bullhorn"></i>
-                <h2>Pengumuman</h2>
-                <p>Informasi terbaru dan pengumuman dari sekolah</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-chart-line"></i>
-                <h2>Laporan Kehadiran</h2>
-                <p>Statistik kehadiran harian dan bulanan anak</p>
-            </div>
-        </section>
-
-        <div class="rekap-button">
-            <a href="#">Lihat Rekapan Bulanan</a>
-        </div>
-    </section>
+    <div class="card">
+        <h2>Pengumuman Terbaru</h2>
+        <ul style="text-align: left; padding-left: 1rem;">
+            <li>📝 <strong>24 Mei 2025:</strong> Libur Nasional pada 1 Juni 2025</li>
+            <li>📝 <strong>23 Mei 2025:</strong> Ujian Tengah Semester dimulai 5 Juni 2025</li>
+            <li>📝 <strong>20 Mei 2025:</strong> Perbaikan gedung akan dilakukan minggu depan</li>
+        </ul>
+    </div>
 @endsection
