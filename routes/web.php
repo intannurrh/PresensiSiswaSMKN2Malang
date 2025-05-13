@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrtuController;
-
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\RekapKehadiran;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('guru.datasiswa');
@@ -13,12 +15,23 @@ Route::get('/1', function () {
 Route::get('/2', function () {
     return view('guru.laporan');
 });
-Route::get('/3', function () {
-    return view('ortu.dashboard');
-});
 Route::prefix('ortu')->group(function () {
     Route::get('/dashboard', [OrtuController::class, 'dashboard'])->name('ortu.dashboard');
     Route::get('/rekap', [OrtuController::class, 'rekap'])->name('ortu.rekap');
     Route::get('/pengumuman', [OrtuController::class, 'pengumuman'])->name('ortu.pengumuman');
 });
-Route::get('/ortu/rekap', [OrtuController::class, 'rekap'])->name('ortu.rekap');
+
+Route::prefix('siswa')->group(function () {
+    Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');
+    Route::get('/rekap', [SiswaController::class, 'rekap'])->name('siswa.rekap');
+    Route::get('/pengumuman', [SiswaController::class, 'pengumuman'])->name('siswa.pengumuman');
+});
+Route::get('/user-select', function () {
+    return view('layout.user_select');
+});
+
+Route::get('/login', function () {
+    return view('layout.login');
+});
+
+Route::post('/check-login', [UserController::class, 'login']);

@@ -4,12 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Orang Tua</title>
-    @vite('resources/css/app.css')
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
-
+    <title>Dashboard Siswa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -195,50 +191,19 @@
 </head>
 
 <body>
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <!-- Tombol panah ke kiri -->
-        <button id="closeSidebarBtn" class="close-sidebar-btn" title="Tutup Sidebar">
-            <i class="fas fa-arrow-left"></i>
-        </button>
-        <a href="{{ route('ortu.dashboard') }}" class="{{ Request::is('ortu/dashboard') ? 'active' : '' }}"><i
-                class="fas fa-home"></i> Dashboard</a>
-        <a href="{{ route('ortu.rekap') }}" class="{{ Request::is('ortu/rekap') ? 'active' : '' }}"><i
-                class="fas fa-chart-line"></i> Rekap Presensi</a>
-        <a href="{{ route('ortu.pengumuman') }}" class="{{ Request::is('ortu/pengumuman') ? 'active' : '' }}"><i
-                class="fas fa-bullhorn"></i> Pengumuman</a>
-    </aside>
-    <header>
-        <button id="openSidebarBtn" class="header-toggle"><i class="fas fa-bars"></i></button>
-        <div class="header-title">Dashboard Orang Tua</div>
-        <button class="account-icon-btn" title="Profil Akun"><i class="fas fa-user-circle"></i></button>
-    </header>
-
-    <!-- Main -->
-    <main>
-        @yield('content')
-    </main>
-
-    <footer>
-        &copy; {{ date('Y') }} Sistem Monitoring Kehadiran
-    </footer>
-
-    <script>
-        const body = document.body;
-        const openBtn = document.getElementById('openSidebarBtn');
-        const closeBtn = document.getElementById('closeSidebarBtn');
-
-        openBtn.addEventListener('click', () => {
-            body.classList.add('sidebar-open');
-            openBtn.classList.add('hidden');
-        });
-
-        closeBtn.addEventListener('click', () => {
-            body.classList.remove('sidebar-open');
-            openBtn.classList.remove('hidden');
-        });
-    </script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 sidebar">
+                <h4 class="text-center">Menu</h4>
+                <a href="{{ route('siswa.dashboard') }}">Dashboard</a>
+                <a href="{{ route('siswa.rekap') }}">Rekap Kehadiran</a>
+                <a href="{{ route('siswa.pengumuman') }}">Pengumuman</a>
+            </div>
+            <div class="col-md-9 p-4">
+                @yield('content')
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
