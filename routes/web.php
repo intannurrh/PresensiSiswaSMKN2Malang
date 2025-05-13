@@ -35,3 +35,7 @@ Route::get('/login', function () {
 });
 
 Route::post('/check-login', [UserController::class, 'login']);
+
+Route::get('/dashboard-guru', function () {
+    return view('guru.datasiswa');
+});

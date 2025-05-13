@@ -20,56 +20,14 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        // $credentials = $request->validate([
-        //     'username' => ['required', 'string'],
-        //     'password' => ['required'],
-        //     'role' => ['required', 'string', 'in:guru,siswa,orangtua'],
-        // ]);
-
-        // $user = Auth::UserModel();
-        // return $user;
-
-        // dd($request->all());
         $get_data = UserModel::where('username', $request->username)->first();
         if ($get_data) {
-            return $get_data;
-        } 
-
-        // if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
-        //     $user = Auth::UserModel();
-        //     if ($user->role !== $credentials['role']) {
-        //         Auth::logout();
-        //         throw ValidationException::withMessages([
-        //             'username' => 'Anda mencoba login sebagai peran (' . $credentials['role'] . ') yang berbeda dari akun Anda (' . $user->role . ').',
-        //         ])->redirectTo(route('login', ['role' => $credentials['role']]));
-        //     }
-
-        //     $request->session()->regenerate();
-
-        //     switch ($user->role) {
-        //         case 'guru':
-        //             return redirect()->intended(route('guru.dashboard')); // Gunakan nama rute
-        //         case 'siswa':
-        //             // return redirect()->intended(route('siswa.dashboard')); // Jika ada
-        //             return redirect('/user-select')->with('status', 'Login berhasil, tetapi dashboard siswa belum tersedia.');
-        //         case 'orangtua':
-        //             // return redirect()->intended(route('orangtua.dashboard')); // Jika ada
-        //             return redirect('/user-select')->with('status', 'Login berhasil, tetapi dashboard orang tua belum tersedia.');
-        //         default:
-        //             Auth::logout();
-        //             return redirect('/user-select')->withErrors(['msg' => 'Role pengguna tidak valid setelah login.']);
-        //     }
-        // }
-
-        // throw ValidationException::withMessages([
-        //     'username' => __('auth.failed'),
-        // ])->redirectTo(route('login', ['role' => $credentials['role']]));
+            return redirect('/dashboard-guru');
+        } else {
+            return redirect()->back()->with('error', 'Login gagal! Username atau password salah.');
+        }
     }
 
-    /**
-     * Menampilkan dashboard guru.
-     * Pengecekan role dilakukan di sini.
-     */
     public function showGuruDashboard(): View|RedirectResponse // Bisa return View atau RedirectResponse
     {
         // Pastikan user sudah login
@@ -94,13 +52,43 @@ class UserController extends Controller
     /**
      * Menangani proses logout.
      */
-     public function logout(Request $request): RedirectResponse
-     {
+    public function logout(Request $request): RedirectResponse
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('user.select');
-     }
+    }
+    /**
+     * Tampilkan dashboard siswa (berdasarkan nama).
+     */
+    public function showSiswaDashboard(string $nama): View|RedirectResponse
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
 
-     // ... (method lain jika perlu) ...
+        $user = Auth::user();
+        if ($user->role !== 'siswa' || $user->name !== $nama) {
+            Auth::logout();
+            return redirect()->route('user.select')->withErrors(['msg' => 'Akses ditolak.']);
+        }
+
+        return view('siswa.dashboard', compact('nama'));
+    }
+    public function showOrtuDashboard(string $nama): View|RedirectResponse
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        if ($user->role !== 'ortu' || $user->name !== $nama) {
+            Auth::logout();
+            return redirect()->route('user.select')->withErrors(['msg' => 'Akses ditolak.']);
+        }
+
+        return view('ortu.dashboard', compact('nama'));
+    }
+
 }
