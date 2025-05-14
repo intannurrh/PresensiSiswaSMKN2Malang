@@ -111,28 +111,28 @@
             <i class="fas fa-arrow-left"></i>
             Kembali
         </a>
-        
+
         <div class="role-indicator">
             <i class="fas fa-user-circle"></i>
             Login sebagai <span id="roleText">{{ ucfirst(request()->query('role', 'Pengguna')) }}</span>
         </div>
 
         <h1>Login</h1>
-        
+
         <form action="/check-login" method="POST">
             @csrf
             <input type="hidden" name="role" value="{{ request()->query('role') }}">
-            
+
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            
+
             <button type="submit" class="login-button">Login</button>
         </form>
     </div>

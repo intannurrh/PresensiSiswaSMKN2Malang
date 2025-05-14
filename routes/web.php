@@ -26,19 +26,6 @@ Route::prefix('siswa')->group(function () {
     Route::get('/rekap', [SiswaController::class, 'rekap'])->name('siswa.rekap');
     Route::get('/pengumuman', [SiswaController::class, 'pengumuman'])->name('siswa.pengumuman');
 });
-Route::get('/user-select', function () {
-    return view('layout.user_select');
-});
-
-Route::get('/login', function () {
-    return view('layout.login');
-})->name('login');
-
-Route::post('/check-login', [UserController::class, 'login']);
-
-Route::get('/dashboard-guru', function () {
-    return view('guru.datasiswa');
-});
 
 Route::middleware('auth')->group(function () {
     Route::get('/siswa/dashboard', [SiswaController::class, 'dashboard']);
@@ -50,3 +37,17 @@ Route::get('/dashboard-guru', function () {
 })->name('guru.dashboard');
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/user-select', function () {
+    return view('layout.user_select');
+});
+
+Route::get('/login', function () {
+    return view('layout.login');
+});
+
+Route::post('/check-login', [UserController::class, 'login']);
+
+Route::get('/dashboard-guru', function () {
+    return view('guru.datasiswa');
+});

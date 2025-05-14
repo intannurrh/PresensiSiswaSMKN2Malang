@@ -18,15 +18,15 @@ class UserController extends Controller
      * Menangani percobaan autentikasi masuk.
      * (Method ini sama seperti sebelumnya, sudah menangani redirect ke dashboard yang sesuai)
      */
-    // public function login(Request $request)
-    // {
-    //     $get_data = UserModel::where('username', $request->username)->first();
-    //     if ($get_data) {
-    //         return redirect('/dashboard-guru');
-    //     } else {
-    //         return redirect()->back()->with('error', 'Login gagal! Username atau password salah.');
-    //     }
-    // }
+    public function login(Request $request)
+    {
+        $get_data = UserModel::where('username', $request->username)->first();
+        if ($get_data) {
+            return redirect('/dashboard-guru');
+        } else {
+            return redirect()->back()->with('error', 'Login gagal! Username atau password salah.');
+        }
+    }
 
     public function showGuruDashboard(): View|RedirectResponse // Bisa return View atau RedirectResponse
     {
@@ -90,27 +90,5 @@ class UserController extends Controller
 
         return view('ortu.dashboard', compact('nama'));
     }
-    public function login(Request $request)
-    {
-        $get_data = UserModel::where('username', $request->username)->first();
-
-        if ($get_data) {
-            // Simpan informasi user di session (jika belum pakai Auth bawaan Laravel)
-            session(['user' => $get_data]);
-
-            if ($get_data->role == 1) {
-                return redirect('/dashboard-guru');
-            } elseif ($get_data->role == 3) {
-                return redirect()->route('siswa.dashboard');
-            } elseif ($get_data->role == 2) {
-                return redirect()->route('ortu.dashboard');
-            } else {
-                return redirect()->back()->with('error', 'Role tidak dikenali.');
-            }
-        } else {
-            return redirect()->back()->with('error', 'Login gagal! Username atau password salah.');
-        }
-    }
-
 
 }
