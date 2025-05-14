@@ -1,209 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Siswa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title') - Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         body {
-            margin: 0;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
             font-family: 'Poppins', sans-serif;
-            background: #f5f7fa;
-            transition: margin-left 0.3s ease;
+            padding-top: 80px;
+            padding-bottom: 60px;
         }
 
-        .sidebar {
-            width: 220px;
-            background: #fff;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 1rem;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 1000;
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        body.sidebar-open .sidebar {
-            transform: translateX(0);
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            color: #333;
-            padding: 0.8rem 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 500;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .close-sidebar-btn {
-            align-self: flex-end;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #333;
-            cursor: pointer;
-            margin-bottom: 1rem;
-        }
-
-        .toggle-sidebar {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            background: #1565c0;
-            color: white;
-            border: none;
-            padding: 0.6rem;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1001;
-            font-size: 1.2rem;
-            display: block;
-        }
-
-        .toggle-sidebar.hidden {
-            display: none;
-        }
-
-        header {
-            background: linear-gradient(to right, #2196f3, #00bcd4);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-        }
-
-        body.sidebar-open header {
-            margin-left: 220px;
-        }
-
-        .header-title {
-            font-size: 1.5rem;
+        .navbar-brand {
             font-weight: 600;
-        }
-
-        .account-icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        main {
-            margin-left: 0;
-            padding: 2rem;
-            transition: margin-left 0.3s ease;
-        }
-
-        body.sidebar-open main {
-            margin-left: 220px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            text-align: center;
-            margin-bottom: 2rem;
+            color: #4facfe;
         }
 
         footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
             text-align: center;
-            padding: 1rem;
-            background: #1565c0;
-            color: white;
-            margin-top: 2rem;
-        }
-
-        header {
-            background: linear-gradient(to right, #2196f3, #00bcd4);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-        }
-
-        body.sidebar-open header {
-            margin-left: 220px;
-        }
-
-        .toggle-sidebar {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .header-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-right: auto;
-            /* Supaya title dorong icon ke kanan */
-        }
-
-        .account-icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .header-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-3 sidebar">
-                <h4 class="text-center">Menu</h4>
-                <a href="{{ route('siswa.dashboard') }}">Dashboard</a>
-                <a href="{{ route('siswa.rekap') }}">Rekap Kehadiran</a>
-                <a href="{{ route('siswa.pengumuman') }}">Pengumuman</a>
-            </div>
-            <div class="col-md-9 p-4">
-                @yield('content')
+    <!-- HEADER -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">MyDashboard</a>
+            <div class="dropdown ms-auto">
+                <a class="btn btn-light rounded-circle shadow-sm" href="#" role="button" id="dropdownMenuLink"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4 text-primary"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-gear me-2"></i>Edit
+                            Profil</a></li>
+                    <li><a class="dropdown-item" href="{{ route('logout') }}"><i
+                                class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                </ul>
             </div>
         </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        @yield('content')
+        @include('part.footer')
     </div>
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('scripts')
 </body>
 
 </html>

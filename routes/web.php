@@ -32,10 +32,21 @@ Route::get('/user-select', function () {
 
 Route::get('/login', function () {
     return view('layout.login');
-});
+})->name('login');
 
 Route::post('/check-login', [UserController::class, 'login']);
 
 Route::get('/dashboard-guru', function () {
     return view('guru.datasiswa');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/siswa/dashboard', [SiswaController::class, 'dashboard']);
+});
+Route::get('/siswa/dashboard', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');
+Route::get('/ortu/dashboard', [OrtuController::class, 'dashboard'])->name('ortu.dashboard');
+Route::get('/dashboard-guru', function () {
+    return view('guru.datasiswa');
+})->name('guru.dashboard');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
