@@ -20,11 +20,25 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $get_data = UserModel::where('username', $request->username)->first();
+        $role = $request->role;
+        $get_data = UserModel::where('nomor_pengenal', $request->nomor_pengenal)
+            ->where('password', $request->password)
+            ->where('role', $role)
+            ->first();
+
         if ($get_data) {
-            return redirect('/dashboard-guru');
+            session(['get_data' => $get_data]);
+            if ($role === 'guru') {
+                return redirect('/dashboard-guru');
+            } elseif ($role === 'siswa') {
+                return redirect()->route('siswa.dashboard');
+            } elseif ($role === 'orangtua') {
+                return redirect()->route('ortu.dashboard');
+            } else {
+                return redirect()->back()->with('error', 'Role tidak dikenali.');
+            }
         } else {
-            return redirect()->back()->with('error', 'Login gagal! Username atau password salah.');
+            return redirect()->back()->with('error', 'Login gagal! Nomor pengenal atau password salah.');
         }
     }
 
@@ -49,19 +63,19 @@ class UserController extends Controller
     }
 
 
-    /**
-     * Menangani proses logout.
-     */
-    public function logout(Request $request): RedirectResponse
+    public function logout(Request $request)
     {
-        Auth::logout();
+        // Hapus session yang disimpan saat login
+        $request->session()->forget('get_data');
+
+        // Regenerate session ID untuk keamanan
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('user.select');
+
+        // Redirect ke halaman login
+        return redirect('/user-select')->with('success', 'Anda berhasil logout.');
     }
-    /**
-     * Tampilkan dashboard siswa (berdasarkan nama).
-     */
+
     public function showSiswaDashboard(string $nama): View|RedirectResponse
     {
         if (!Auth::check()) {
@@ -90,5 +104,4 @@ class UserController extends Controller
 
         return view('ortu.dashboard', compact('nama'));
     }
-
 }

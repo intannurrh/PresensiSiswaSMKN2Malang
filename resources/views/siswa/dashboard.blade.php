@@ -7,7 +7,7 @@
         <!-- Rekap Kehadiran -->
         <div class="col-lg-8">
             <div class="card p-4">
-                <h4 class="text-primary mb-4">Data Kehadiran Harian</h4>
+                <h4 class="text-dark mb-4">Data Kehadiran Harian</h4>
 
                 <table class="table table-bordered text-center align-middle">
                     <thead class="table-light">
@@ -35,7 +35,7 @@
         <!-- Pengumuman -->
         <div class="col-lg-4">
             <div class="card p-4">
-                <h5 class="text-warning mb-3">📢 Pengumuman</h5>
+                <h5 class="text-dark mb-3" color=>📢 Pengumuman</h5>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">Ujian Tengah Semester dimulai 20 Mei 2025</li>
                     <li class="list-group-item">Harap mengumpulkan tugas Bahasa Indonesia paling lambat 18 Mei</li>

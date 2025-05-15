@@ -6,6 +6,11 @@
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
     <style>
         * {
             margin: 0;
@@ -27,7 +32,7 @@
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
@@ -105,12 +110,21 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <a href="/user-select" class="back-button">
             <i class="fas fa-arrow-left"></i>
             Kembali
         </a>
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        @endif
+
 
         <div class="role-indicator">
             <i class="fas fa-user-circle"></i>
@@ -124,8 +138,20 @@
             <input type="hidden" name="role" value="{{ request()->query('role') }}">
 
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                @php
+                $role = request()->query('role', 'pengguna');
+                @endphp
+
+                <label for="nomor_pengenal">
+                    @if($role === 'guru')
+                    NIP
+                    @elseif($role === 'siswa' || $role === 'orangtua')
+                    NIS
+                    @else
+                    NIP / NIS
+                    @endif
+                </label>
+                <input type="text" id="nomor_pengenal" name="nomor_pengenal" required>
             </div>
 
             <div class="form-group">
@@ -137,4 +163,5 @@
         </form>
     </div>
 </body>
+
 </html>

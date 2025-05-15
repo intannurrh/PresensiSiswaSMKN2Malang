@@ -5,13 +5,14 @@ use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\RekapKehadiran;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Presensi;
+use App\Models\Attendance;
+use App\Http\Controllers\GuruController;
 
 Route::get('/', function () {
     return view('guru.datasiswa');
 });
-Route::get('/1', function () {
-    return view('guru.dashboard');
-});
+
 Route::get('/2', function () {
     return view('guru.laporan');
 });
@@ -26,18 +27,6 @@ Route::prefix('siswa')->group(function () {
     Route::get('/rekap', [SiswaController::class, 'rekap'])->name('siswa.rekap');
     Route::get('/pengumuman', [SiswaController::class, 'pengumuman'])->name('siswa.pengumuman');
 });
-
-Route::middleware('auth')->group(function () {
-    Route::get('/siswa/dashboard', [SiswaController::class, 'dashboard']);
-});
-Route::get('/siswa/dashboard', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');
-Route::get('/ortu/dashboard', [OrtuController::class, 'dashboard'])->name('ortu.dashboard');
-Route::get('/dashboard-guru', function () {
-    return view('guru.datasiswa');
-})->name('guru.dashboard');
-Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
 Route::get('/user-select', function () {
     return view('layout.user_select');
 });
@@ -46,8 +35,18 @@ Route::get('/login', function () {
     return view('layout.login');
 });
 
-Route::post('/check-login', [UserController::class, 'login']);
 
 Route::get('/dashboard-guru', function () {
-    return view('guru.datasiswa');
+    return view('guru.dashboard');
+});
+
+Route::post('/check-login', [UserController::class, 'login']);
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+Route::prefix('guru')->name('guru.')->group(function () {
+    Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
+    Route::delete('/presensi/{id}', [GuruController::class, 'destroy'])->name('destroy'); // Sesuaikan di blade
+    Route::get('/datasiswa', [GuruController::class, 'datasiswa'])->name('datasiswa');
+    Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan');
+    Route::get('/download-csv', [GuruController::class, 'downloadCSV'])->name('downloadCSV');
 });

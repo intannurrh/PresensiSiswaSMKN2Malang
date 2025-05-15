@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 
 class SiswaController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        $presensi = DB::table('siswa')
-            ->where('id', auth()->user()->id)
+        $data = session('get_data');
+        $kehadiran = DB::table('siswa')
+            ->join('kehadiran', 'kehadiran.id_siswa', 'siswa.id_siswa')
+            ->where('id_user', $data->id_user)
             ->orderBy('tanggal', 'desc')
             ->limit(5)
             ->get();
