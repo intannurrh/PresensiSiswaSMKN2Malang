@@ -4,25 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+class AddSiswaIdToPresensisTable extends Migration
+{
+    public function up()
     {
         Schema::table('presensis', function (Blueprint $table) {
             $table->unsignedBigInteger('siswa_id')->after('id');
 
-            // Jika ingin pakai foreign key constraint:
+            // Tambahkan foreign key constraint agar lebih aman
             $table->foreign('siswa_id')->references('id')->on('siswas')->onDelete('cascade');
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::table('presensis', function (Blueprint $table) {
             $table->dropForeign(['siswa_id']);
             $table->dropColumn('siswa_id');
         });
     }
-};
+}

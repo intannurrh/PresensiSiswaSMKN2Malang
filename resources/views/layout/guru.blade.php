@@ -133,76 +133,15 @@
         <a href="{{ route('guru.dashboard') }}" class="{{ Request::is('guru/dashboard') ? 'active' : '' }}">
             <i class="fas fa-home"></i> Dashboard</a>
         <a href="{{ route('guru.laporan') }}" class="{{ Request::is('guru/laporan') ? 'active' : '' }}">
-            <i class="fas fa-bullhorn"></i> Pengumuman</a>
+            <i class="fas fa-bullhorn"></i> Laporan</a>
         <a href="{{ route('guru.datasiswa') }}" class="{{ Request::is('guru/datasiswa') ? 'active' : '' }}">
             <i class="fas fa-users"></i> Data Siswa</a>
     </aside>
 
-    <div class="container mb-4">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <div class="card card-border-left hadir shadow-sm">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="fas fa-user-check fa-2x text-success me-3"></i>
-                        <div>
-                            <h5 class="card-title mb-0">Hadir</h5>
-                            <p class="card-text">15 Siswa</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-border-left tidak-hadir shadow-sm">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="fas fa-user-times fa-2x text-danger me-3"></i>
-                        <div>
-                            <h5 class="card-title mb-0">Tidak Hadir</h5>
-                            <p class="card-text">3 Siswa</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card-border-left telat shadow-sm">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="fas fa-user-clock fa-2x text-warning me-3"></i>
-                        <div>
-                            <h5 class="card-title mb-0">Terlambat</h5>
-                            <p class="card-text">2 Siswa</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- TABEL -->
-    <div class="container">
-        <div class="card shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Laporan Kehadiran Hari Ini</h5>
-                <button class="btn btn-sm btn-outline-primary" onclick="downloadCSV()">
-                    <i class="fas fa-download"></i> Unduh CSV
-                </button>
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nama</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                            <th>Jam</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendance-body">
-                        <!-- Data akan dirender via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <main>
+        @yield('content')
+    </main>
 
     <!-- SCRIPT LOGIKA -->
     <script>

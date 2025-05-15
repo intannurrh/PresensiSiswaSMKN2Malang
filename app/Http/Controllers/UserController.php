@@ -29,7 +29,7 @@ class UserController extends Controller
         if ($get_data) {
             session(['get_data' => $get_data]);
             if ($role === 'guru') {
-                return redirect('/dashboard-guru');
+                return redirect('/guru/dashboard');
             } elseif ($role === 'siswa') {
                 return redirect()->route('siswa.dashboard');
             } elseif ($role === 'orangtua') {
