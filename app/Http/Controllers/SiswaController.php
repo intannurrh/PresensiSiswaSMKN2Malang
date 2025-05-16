@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\Siswa;
 
 class SiswaController extends Controller
 {
@@ -27,7 +28,7 @@ class SiswaController extends Controller
 
     public function rekap()
     {
-        $rekap = DB::table('presensi')
+        $rekap = DB::table('presensis')
             ->where('siswa_id', auth()->user()->id)
             ->orderBy('tanggal', 'desc')
             ->get();
@@ -42,5 +43,16 @@ class SiswaController extends Controller
             ->get();
 
         return view('siswa.pengumuman', compact('pengumuman'));
+    }
+
+    public function profile()
+    {
+        $user = session('get_data');
+
+        $siswa = Siswa::with(['guru', 'orangTua'])
+            ->where('id_user', $user->id_user)
+            ->first();
+
+        return view('siswa.profile', compact('siswa'));
     }
 }

@@ -2,13 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OrangTua;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\rekap_kehadiran;
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
 
+class OrangTua extends Model
+{
+    protected $table = 'orang_tua';
+    protected $primaryKey = 'id_orangtua';
+    public $timestamps = false;
 
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'id_siswa');
+    }
+}
 class OrtuController extends Controller
 {
+        public function getData()
+    {
+      $data = DB::table('orang_tua')
+        ->join('siswa', 'orang_tua.id_siswa', '=', 'siswa.id_siswa')
+        ->select(
+            'orang_tua.id_orangtua',
+            'orang_tua.id_user',
+            'siswa.nama as nama_siswa',   // ambil nama siswa dari tabel siswa
+            'orang_tua.nama as nama_orangtua'
+        )
+        ->get();
+
+    return response()->json($data);
+    }
+
     public function dashboard()
     {
         $data = session('get_data');

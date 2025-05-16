@@ -27,7 +27,7 @@
 
         .navbar-brand {
             font-weight: 600;
-            color: #09090B
+            color: #09090B;
             letter-spacing: -0.5px;
         }
 
@@ -82,6 +82,12 @@
     <!-- HEADER -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
+            @if (Route::currentRouteName() == 'siswa.profile')
+                <a href="{{ route('siswa.dashboard') }}" class="btn btn-light me-2"
+                    style="border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <i class="bi bi-arrow-left fs-4 text-primary"></i>
+                </a>
+            @endif
             <a class="navbar-brand" href="#">Presensi SMKN 2 Malang</a>
             <div class="dropdown ms-auto">
                 <a class="btn btn-light shadow-sm btn-circle d-flex align-items-center justify-content-center" href="#"
@@ -89,8 +95,23 @@
                     <i class="bi bi-person-circle fs-4 text-primary"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="{{ route('logout') }}">
-                        <i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('siswa.profile') }}">
+                            <i class="bi bi-person-lines-fill me-2"></i>Profil Siswa
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Link Logout yang memicu form -->
+                        <a class="dropdown-item" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </a>
+
+                        <!-- Form tersembunyi -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>

@@ -191,6 +191,100 @@
             font-size: 1.5rem;
             cursor: pointer;
         }
+
+        /* Background overlay */
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            /* lebih gelap & transparan */
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Tampilkan modal */
+        #modalOverlay.active {
+            display: flex;
+        }
+
+        /* Container modal */
+        #modalOverlay>div {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 15px;
+            width: 360px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            transition: transform 0.3s ease;
+            transform: translateY(0);
+        }
+
+        /* Title modal */
+        #modalTitle {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1565c0;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* Close button */
+        #closeModalBtn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            color: #888;
+            transition: color 0.2s ease;
+        }
+
+        #closeModalBtn:hover {
+            color: #1565c0;
+        }
+
+        /* Konten tiap data */
+        #modalContent>div {
+            background: #f3f6fb;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 1rem;
+            box-shadow: inset 0 0 8px rgba(21, 101, 192, 0.1);
+            transition: background-color 0.3s ease;
+            cursor: default;
+        }
+
+        #modalContent>div:hover {
+            background: #e3f2fd;
+        }
+
+        /* Label teks tebal */
+        #modalContent strong {
+            color: #0d47a1;
+        }
+
+        /* Responsive modal width (optional) */
+        @media (max-width: 400px) {
+            #modalOverlay>div {
+                width: 90%;
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -212,8 +306,16 @@
     <header>
         <button id="openSidebarBtn" class="header-toggle"><i class="fas fa-bars"></i></button>
         <div class="header-title">Dashboard Orang Tua</div>
-        <button class="account-icon-btn" title="Profil Akun"><i class="fas fa-user-circle"></i></button>
+        <button class="account-icon-btn" id="profileBtn" title="Profil Akun">
+            <i class="fas fa-user-circle"></i>
+        </button>
 
+        <form id="logoutForm" method="POST" action="{{ route('logout') }}" style="display:inline;">
+            @csrf
+            <button type="submit" class="account-icon-btn" title="Logout" style="margin-left: 10px;">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </form>
     </header>
 
     <!-- Main -->
@@ -225,7 +327,19 @@
         &copy; {{ date('Y') }} Sistem Monitoring Kehadiran
     </footer>
 
+    <!-- Modal Popup -->
+    <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div>
+            <button id="closeModalBtn" aria-label="Tutup Modal">&times;</button>
+            <h3 id="modalTitle">Data Orang Tua</h3>
+            <div id="modalContent">
+                <!-- Data akan muncul di sini -->
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Sidebar toggle
         const body = document.body;
         const openBtn = document.getElementById('openSidebarBtn');
         const closeBtn = document.getElementById('closeSidebarBtn');
@@ -238,6 +352,50 @@
         closeBtn.addEventListener('click', () => {
             body.classList.remove('sidebar-open');
             openBtn.classList.remove('hidden');
+        });
+
+        // Fetch dan tampilkan modal data orang tua
+        document.getElementById('profileBtn').addEventListener('click', function () {
+            fetch('/ortu/data-orang-tua')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    const modalContent = document.getElementById('modalContent');
+                    modalContent.innerHTML = '';
+
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            modalContent.innerHTML += `
+                                <div>
+                                    <strong>Nama Orang Tua:</strong> ${item.nama_orangtua}<br>
+                                    <strong>Nama Siswa:</strong> ${item.nama_siswa}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        modalContent.innerHTML = '<p>Data tidak ditemukan.</p>';
+                    }
+
+                    document.getElementById('modalOverlay').classList.add('active');
+                })
+                .catch(error => {
+                    console.error('Gagal mengambil data:', error);
+                    alert('Gagal mengambil data orang tua.');
+                });
+        });
+
+        // Tutup modal dengan tombol ×
+        document.getElementById('closeModalBtn').addEventListener('click', function () {
+            document.getElementById('modalOverlay').classList.remove('active');
+        });
+
+        // Tutup modal jika klik di luar konten modal
+        document.getElementById('modalOverlay').addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
         });
     </script>
 </body>

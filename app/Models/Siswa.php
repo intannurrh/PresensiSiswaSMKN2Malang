@@ -47,4 +47,10 @@ class Siswa extends Model
         return $this->hasMany(Kehadiran::class, 'id_siswa', 'id_siswa');
     }
 
+
+    public function orangTua()
+{
+    return $this->hasOne(\App\Models\OrangTua::class, 'id_siswa', 'id_siswa');
+}
+
 }

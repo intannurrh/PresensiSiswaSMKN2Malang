@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Presensi;
-use App\Models\Siswa;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class GuruController extends Controller
@@ -30,6 +31,10 @@ class GuruController extends Controller
         return redirect()->route('guru.dashboard')->with('success', 'Data berhasil dihapus');
     }
 
+    public function datasiswa()
+    {
+        return view('guru.datasiswa');
+    }
 
 
     public function downloadCSV()
@@ -60,11 +65,24 @@ class GuruController extends Controller
         $presensis = Presensi::with('siswa')->orderBy('tanggal', 'desc')->get();
         return view('guru.laporan', compact('presensis'));
     }
-    public function dataSiswa()
+    public function dataAnakKelasSaya()
     {
-        $guru = Auth::user(); // pastikan user yang login adalah guru
-        $siswas = Siswa::where('id_guru', $guru->id)->get(); // ambil siswa sesuai id guru
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
 
-        return view('guru.datasiswa', compact('siswas'));
+        $guru = \App\Models\Guru::where('id_user', $user->id_user)->first();
+        if (!$guru) {
+            return redirect()->back()->with('error', 'Data guru tidak ditemukan');
+        }
+
+        $siswa = \App\Models\Siswa::with('orangTua')
+            ->where('kelas', $guru->kelas)
+            ->where('jurusan', $guru->jurusan)
+            ->get();
+
+        return view('guru.datasiswa', compact('siswa'));
     }
+
 }
