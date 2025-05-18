@@ -42,15 +42,24 @@ class Siswa extends Model
     }
 
     // Jika ingin relasi ke kehadiran (jika ada model Kehadiran)
-    public function kehadiran()
+    public function presensis()
     {
-        return $this->hasMany(Kehadiran::class, 'id_siswa', 'id_siswa');
+        return $this->hasMany(Presensi::class, 'siswa_id', 'siswa_id');
     }
 
 
+    /*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Get the related OrangTua model for the Siswa.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+
+    /*******  74f23d5e-cea9-4447-bd81-879833601e63  *******/
     public function orangTua()
-{
-    return $this->hasOne(\App\Models\OrangTua::class, 'id_siswa', 'id_siswa');
-}
+    {
+        return $this->hasOne(\App\Models\OrangTua::class, 'id_siswa', 'id_siswa');
+    }
+
 
 }

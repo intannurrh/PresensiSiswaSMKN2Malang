@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class OrangTua extends Model
 {
     protected $table = 'orang_tua';
@@ -11,7 +12,12 @@ class OrangTua extends Model
     public $timestamps = false;
 
     protected $fillable = ['id_user', 'id_siswa', 'nama'];
+
+
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'id_siswa');
+    }
+
 }
-
-
-

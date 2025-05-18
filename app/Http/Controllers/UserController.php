@@ -12,12 +12,7 @@ use Illuminate\View\View; // Import View
 
 class UserController extends Controller
 {
-    // ... (method showUserSelectForm, showLoginForm jika ada) ...
 
-    /**
-     * Menangani percobaan autentikasi masuk.
-     * (Method ini sama seperti sebelumnya, sudah menangani redirect ke dashboard yang sesuai)
-     */
     public function login(Request $request)
     {
         $role = $request->role;
@@ -25,7 +20,6 @@ class UserController extends Controller
             ->where('password', $request->password)
             ->where('role', $role)
             ->first();
-
         if ($get_data) {
             session(['get_data' => $get_data]);
             if ($role === 'guru') {
@@ -33,11 +27,12 @@ class UserController extends Controller
             } elseif ($role === 'siswa') {
                 return redirect()->route('siswa.dashboard');
             } elseif ($role === 'orangtua') {
-                return redirect()->route('ortu.dashboard');
+                return redirect('ortu/dashboard');
             } else {
                 return redirect()->back()->with('error', 'Role tidak dikenali.');
             }
-        } else {
+        }
+         else {
             return redirect()->back()->with('error', 'Login gagal! Nomor pengenal atau password salah.');
         }
     }
@@ -73,7 +68,7 @@ class UserController extends Controller
         $request->session()->regenerateToken();
 
         // Redirect ke halaman login
-        return redirect('/user-select')->with('success', 'Anda berhasil logout.');
+        return redirect('/')->with('success', 'Anda berhasil logout.');
     }
 
     public function showSiswaDashboard(string $nama): View|RedirectResponse
@@ -93,7 +88,7 @@ class UserController extends Controller
     public function showOrtuDashboard(string $nama): View|RedirectResponse
     {
         if (!Auth::check()) {
-            return redirect()->route('login');
+            return redirect()->route('login?role=orangtua');
         }
 
         $user = Auth::user();
