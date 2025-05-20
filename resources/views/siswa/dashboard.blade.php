@@ -8,6 +8,14 @@
             <h4 class="fw-bold text-primary">Selamat Datang, {{ $siswa->nama_siswa ?? '-' }}!</h4>
             <p class="text-muted">Semoga harimu menyenangkan dan penuh semangat belajar.</p>
         </div>
+        <!-- Tombol Presensi -->
+        <div class="col-12 text-center mb-4">
+            <a href="{{ route('siswa.presensi') }}"
+                class="btn btn-primary btn-lg rounded-pill shadow d-inline-flex align-items-center px-4 py-2">
+                <i class="bi bi-pencil-square me-2 fs-5"></i>
+                Isi Presensi Hari Ini
+            </a>
+        </div>
 
         <!-- Rekap Kehadiran -->
         <div class="col-lg-8">
@@ -24,6 +32,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Tanggal</th>
+                                <th>Jam</th>
                                 <th>Status Kehadiran</th>
                             </tr>
                         </thead>
@@ -31,16 +40,16 @@
                             @forelse($presensis as $item)
                                 <tr>
                                     <td>{{ \Carbon\Carbon::parse($item->tanggal ?? $item->date)->format('d-m-Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('H:i') }}</td>
                                     <td>{{ $item->status }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="2">Tidak ada data kehadiran.</td>
+                                    <td colspan="3">Tidak ada data kehadiran.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
-
 
                     <div class="mt-4">
                         <canvas id="attendanceChart" height="150"></canvas>
@@ -69,6 +78,7 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('scripts')
@@ -103,7 +113,7 @@
                         legend: {
                             display: true,
                             labels: {
-                                generateLabels: function(chart) {
+                                generateLabels: function (chart) {
                                     return chart.data.labels.map((label, index) => {
                                         return {
                                             text: label,

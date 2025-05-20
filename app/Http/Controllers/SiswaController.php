@@ -6,38 +6,39 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Presensi;
+use Carbon\Carbon;
 
 class SiswaController extends Controller
 {
     public function dashboard(Request $request)
-{
-    $data = session('get_data');
+    {
+        $data = session('get_data');
 
-    if (!$data) {
-        return redirect('/login')->with('error', 'Session tidak ditemukan, silakan login lagi.');
+        if (!$data) {
+            return redirect('/login')->with('error', 'Session tidak ditemukan, silakan login lagi.');
+        }
+
+        $siswa = DB::table('siswa')->where('id_user', $data->id_user)->first();
+
+        if (!$siswa) {
+            return redirect('/login')->with('error', 'Data siswa tidak ditemukan.');
+        }
+
+        $presensis = DB::table('presensis')
+            ->select('tanggal', 'status', 'created_at') // pastikan 'created_at' diambil
+            ->where('siswa_id', $siswa->id_siswa)
+            ->orderBy('tanggal', 'desc')
+            ->limit(5)
+            ->get();
+
+        $pengumuman = DB::table('pengumuman')
+            ->orderBy('tanggal', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('siswa.dashboard', compact('presensis', 'pengumuman', 'siswa'));
     }
-
-    $siswa = DB::table('siswa')->where('id_user', $data->id_user)->first();
-
-    if (!$siswa) {
-        return redirect('/login')->with('error', 'Data siswa tidak ditemukan.');
-    }
-
-    $presensis = DB::table('presensis')
-        ->where('siswa_id', $siswa->id_siswa)
-        ->orderBy('tanggal', 'desc')
-        ->limit(5)
-        ->get();
-
-    $pengumuman = DB::table('pengumuman')
-        ->orderBy('tanggal', 'desc')
-        ->limit(3)
-        ->get();
-
-    // DI SINI: Menambahkan $siswa ke dalam compact
-    return view('siswa.dashboard', compact('presensis', 'pengumuman', 'siswa'));
-}
-
 
     public function rekap()
     {
@@ -50,6 +51,7 @@ class SiswaController extends Controller
 
         return view('siswa.rekap', compact('rekap'));
     }
+
     public function pengumuman()
     {
         $pengumuman = DB::table('pengumuman')
@@ -68,5 +70,65 @@ class SiswaController extends Controller
             ->first();
 
         return view('siswa.profile', compact('siswa'));
+    }
+
+    public function formAbsen()
+    {
+        $data = session('get_data');
+        if (!$data) {
+            return redirect('/login')->with('error', 'Session tidak ditemukan.');
+        }
+
+        $siswa = Siswa::where('id_user', $data->id_user)->first();
+        $tanggal = Carbon::today()->toDateString();
+
+        $sudahAbsen = Presensi::where('siswa_id', $siswa->id_siswa)
+            ->where('tanggal', $tanggal)
+            ->exists();
+
+        $jamSekarang = Carbon::now('Asia/Jakarta')->format('H:i');
+        $disableHadir = $jamSekarang >= '07:00';
+        $enablePulang = $jamSekarang >= '14:30' && $jamSekarang <= '23:59';
+        return view('siswa.presensi', compact('sudahAbsen', 'disableHadir', 'enablePulang'));
+    }
+
+    public function presensi(Request $request)
+    {
+        $request->validate([
+            'status' => 'required|in:Hadir,Tidak Hadir,Terlambat,Izin',
+            'keterangan' => 'nullable|string|max:255',
+        ]);
+
+        $tanggal = Carbon::today()->toDateString();
+        $jam = Carbon::now()->format('H:i:s');
+        $jamSekarang = Carbon::now()->format('H:i');
+
+        $data = session('get_data');
+
+        $siswa = Siswa::where('id_user', $data->id_user)->first();
+        if (!$siswa) {
+            return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
+        }
+
+        $sudahAbsen = Presensi::where('siswa_id', $siswa->id_siswa)
+            ->where('tanggal', $tanggal)
+            ->exists();
+
+        if ($sudahAbsen) {
+            return redirect()->route('siswa.dashboard')->with('error', 'Kamu sudah mengisi presensi hari ini.');
+        }
+
+        if ($request->status === 'Hadir' && $jamSekarang >= '07:00') {
+            return redirect()->back()->with('error', 'Presensi Hadir ditutup setelah pukul 07:00.');
+        }
+
+        Presensi::create([
+            'siswa_id' => $siswa->id_siswa,
+            'status' => $request->status,
+            'tanggal' => $tanggal,
+            'keterangan' => $request->keterangan
+        ]);
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Presensi berhasil dikirim.');
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Presensi extends Model
 {
     protected $table = 'presensis';
+    protected $fillable = ['siswa_id', 'status', 'tanggal', 'jam'];
+
 
     public function siswa()
     {

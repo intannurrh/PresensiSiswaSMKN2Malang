@@ -22,8 +22,11 @@ Route::prefix('ortu')->group(function () {
 });
 
 Route::prefix('siswa')->group(function () {
-    Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');});
-Route::get('/siswa/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
+    Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('siswa.dashboard');
+    Route::get('/presensi', [SiswaController::class, 'formAbsen'])->name('siswa.presensi'); // ganti ke formAbsen
+    Route::post('/presensi', [SiswaController::class, 'presensi'])->name('siswa.presensi.submit');
+    Route::get('/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
+});
 
 Route::prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');

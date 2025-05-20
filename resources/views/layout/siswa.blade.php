@@ -104,7 +104,7 @@
 
     <!-- NAVBAR HEADER -->
     <nav class="navbar">
-        @if (Route::currentRouteName() == 'siswa.profile')
+    @if (in_array(Route::currentRouteName(), ['siswa.profile', 'siswa.presensi']))
         <a href="{{ route('siswa.dashboard') }}" class="btn btn-light shadow-sm" style="border-radius:50%; padding: 0.375rem 0.5rem; margin-right:1rem;">
             <i class="bi bi-arrow-left fs-4 text-primary"></i>
         </a>
