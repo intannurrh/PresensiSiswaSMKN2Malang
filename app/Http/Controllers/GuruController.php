@@ -49,15 +49,23 @@ class GuruController extends Controller
             return redirect()->back()->with('error', 'Data guru tidak ditemukan');
         }
 
-        $presensis = Presensi::with('siswa')
-            ->whereDate('tanggal', now()->toDateString())
-            ->whereHas('siswa', function ($query) use ($guru) {
-                $query->where('id_guru', $guru->id_guru);
-            })
-            ->get();
+        $today = \Carbon\Carbon::now('Asia/Jakarta')->toDateString();
 
-        return view('guru.dashboard', compact('presensis'));
+        // 1. Ambil semua siswa milik guru
+        $siswaList = Siswa::where('id_guru', $guru->id_guru)->get();
+
+        // 2. Ambil semua presensi hari ini
+        $presensisToday = Presensi::whereDate('tanggal', $today)->get()->keyBy('siswa_id');
+
+        // 3. Tambahkan properti 'presensi_today' ke masing-masing siswa
+        foreach ($siswaList as $siswa) {
+            $siswa->presensi_today = $presensisToday->get($siswa->id_siswa);
+        }
+
+        return view('guru.dashboard', compact('siswaList'));
     }
+
+
 
 
     public function destroy($id)
@@ -152,6 +160,4 @@ class GuruController extends Controller
 
         return response()->json(['message' => 'Data berhasil diperbarui']);
     }
-
-
 }

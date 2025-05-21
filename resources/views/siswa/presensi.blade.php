@@ -38,7 +38,7 @@
                     <form action="{{ route('siswa.presensi.submit') }}" method="POST">
                         @csrf
 
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label class="form-label fw-semibold">Pilih Status Kehadiran</label>
                             <div class="d-flex flex-wrap gap-3">
                             @foreach (['Hadir', 'Tidak Hadir', 'Terlambat'] as $option)
@@ -57,7 +57,7 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="mb-3">
                             <label for="keterangan" class="form-label fw-semibold">Keterangan (Opsional)</label>

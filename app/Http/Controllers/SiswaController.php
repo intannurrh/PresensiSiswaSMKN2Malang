@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Presensi;
 use Carbon\Carbon;
+use App\Models\Pengumuman;
 
 class SiswaController extends Controller
 {
@@ -26,7 +27,7 @@ class SiswaController extends Controller
         }
 
         $presensis = DB::table('presensis')
-            ->select('tanggal', 'status', 'created_at') // pastikan 'created_at' diambil
+            ->select('tanggal', 'status', 'created_at', 'jam_pulang') // pastikan 'created_at' diambil
             ->where('siswa_id', $siswa->id_siswa)
             ->orderBy('tanggal', 'desc')
             ->limit(5)
@@ -36,6 +37,8 @@ class SiswaController extends Controller
             ->orderBy('tanggal', 'desc')
             ->limit(3)
             ->get();
+
+        $pengumuman = Pengumuman::orderBy('tanggal', 'desc')->get();
 
         return view('siswa.dashboard', compact('presensis', 'pengumuman', 'siswa'));
     }
@@ -127,13 +130,17 @@ class SiswaController extends Controller
     public function presensi(Request $request)
     {
         $request->validate([
-            'status' => 'required|in:Hadir,Tidak Hadir,Terlambat,Izin',
             'keterangan' => 'nullable|string|max:255',
         ]);
 
+
         $tanggal = Carbon::today()->toDateString();
-        $jam = Carbon::now()->format('H:i:s');
-        $jamSekarang = Carbon::now()->format('H:i');
+
+        Carbon::setLocale('id');
+        date_default_timezone_set('Asia/Jakarta');
+
+        $jamSekarang = Carbon::now()->format('H:i:s');
+        $jamSekarangs = ('06.05');
 
         $data = session('get_data');
 
@@ -150,13 +157,12 @@ class SiswaController extends Controller
             return redirect()->route('siswa.dashboard')->with('error', 'Kamu sudah mengisi presensi hari ini.');
         }
 
-        if ($request->status === 'Hadir' && $jamSekarang >= '07:00') {
-            return redirect()->back()->with('error', 'Presensi Hadir ditutup setelah pukul 07:00.');
-        }
+        $status = $jamSekarang < '07:00' ? 'Hadir' : 'Terlambat';
+
 
         Presensi::create([
             'siswa_id' => $siswa->id_siswa,
-            'status' => $request->status,
+            'status' => $status,
             'tanggal' => $tanggal,
             'keterangan' => $request->keterangan
         ]);

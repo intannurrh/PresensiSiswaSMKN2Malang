@@ -9,6 +9,7 @@ use App\Http\Controllers\Presensi;
 use App\Models\Attendance;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PengumumanController;
 
 Route::post('/check-login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
@@ -45,4 +46,6 @@ Route::prefix('guru')->name('guru.')->group(function () {
     Route::put('/kehadiran/{id}', [GuruController::class, 'update'])->name('update');
 });
 Route::get('/guru/profile', [GuruController::class, 'profile'])->name('guru.profile');
+Route::get('/pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
+
 
