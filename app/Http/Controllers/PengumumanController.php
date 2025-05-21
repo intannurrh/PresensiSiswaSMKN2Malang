@@ -12,4 +12,6 @@ class PengumumanController extends Controller
         $pengumuman = Pengumuman::orderBy('tanggal', 'desc')->get();
         return view('pengumuman.index', compact('pengumuman'));
     }
+    // dhvbnlm,kjhgfzdxfchgvjbknm
+
 }
