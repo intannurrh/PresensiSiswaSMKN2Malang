@@ -33,18 +33,15 @@
                     </div>
                 @endif
 
-                @if ($sudahAbsen)
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle-fill me-2"></i> Kamu sudah mengisi presensi hari ini.
-                    </div>
-                @else
+                {{-- Presensi Hadir --}}
+                @if (!$sudahAbsen)
                     <form action="{{ route('siswa.presensi.submit') }}" method="POST">
                         @csrf
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Pilih Status Kehadiran</label>
                             <div class="d-flex flex-wrap gap-3">
-                                @foreach (['Hadir', 'Tidak Hadir', 'Terlambat', 'Izin'] as $option)
+                            @foreach (['Hadir', 'Tidak Hadir', 'Terlambat'] as $option)
                                     @php
                                         $isDisabled = $option === 'Hadir' && $disableHadir;
                                     @endphp
@@ -71,38 +68,32 @@
                         <button type="submit" class="btn btn-primary me-2">
                             <i class="bi bi-check-circle-fill me-1"></i>Submit Kehadiran
                         </button>
-
-                        {{-- Tombol Pulang --}}
-                        @php
-                            $jamSekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('H:i');
-                            $enablePulang = $jamSekarang >= '14:30' && $jamSekarang <= '23:59';
-                        @endphp
-                        <button type="button"
-                            class="btn btn-secondary"
-                            id="btnPulang"
-                            {{ $enablePulang ? '' : 'disabled' }}
-                            {{ $enablePulang ? '' : 'title=Tombol pulang hanya aktif jam 14:30 - 24:00' }}>
-                            <i class="bi bi-door-closed-fill me-1"></i>Pulang
-                        </button>
                     </form>
+                @else
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i> Kamu sudah mengisi presensi hari ini.
+                    </div>
+
+                    {{-- Tombol Pulang --}}
+                    @if (is_null($presensi->jam_pulang) && $enablePulang)
+                        <form action="{{ route('siswa.presensi.pulang') }}" method="POST" class="mt-3">
+                            @csrf
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="bi bi-door-closed-fill me-1"></i>Presensi Pulang
+                            </button>
+                        </form>
+                    @elseif (!is_null($presensi->jam_pulang))
+                        <div class="alert alert-success mt-3">
+                            <i class="bi bi-clock-fill me-2"></i> Kamu sudah melakukan presensi pulang pada {{ \Carbon\Carbon::parse($presensi->jam_pulang)->format('H:i') }}.
+                        </div>
+                    @else
+                        <div class="alert alert-warning mt-3">
+                            <i class="bi bi-clock me-2"></i> Tombol presensi pulang hanya tersedia antara pukul 14:30 - 24:00.
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>
-    </div>
+    </div
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    const btnPulang = document.getElementById('btnPulang');
-
-    btnPulang.addEventListener('click', () => {
-        if (btnPulang.disabled) {
-            alert('Tombol Pulang hanya bisa digunakan antara jam 14:30 hingga 24:00.');
-            return;
-        }
-        alert('Tombol Pulang ditekan! Implementasi backend belum tersedia.');
-        // Tambahkan logic AJAX atau redirect ke route pulang jika sudah ada
-    });
-</script>
 @endsection

@@ -82,14 +82,46 @@ class SiswaController extends Controller
         $siswa = Siswa::where('id_user', $data->id_user)->first();
         $tanggal = Carbon::today()->toDateString();
 
-        $sudahAbsen = Presensi::where('siswa_id', $siswa->id_siswa)
+        $presensi = Presensi::where('siswa_id', $siswa->id_siswa)
             ->where('tanggal', $tanggal)
-            ->exists();
+            ->first();
 
         $jamSekarang = Carbon::now('Asia/Jakarta')->format('H:i');
         $disableHadir = $jamSekarang >= '07:00';
         $enablePulang = $jamSekarang >= '14:30' && $jamSekarang <= '23:59';
-        return view('siswa.presensi', compact('sudahAbsen', 'disableHadir', 'enablePulang'));
+
+        return view('siswa.presensi', [
+            'sudahAbsen' => $presensi !== null,
+            'disableHadir' => $disableHadir,
+            'enablePulang' => $enablePulang,
+            'presensi' => $presensi // dikirim agar bisa cek jam_pulang
+        ]);
+    }
+
+    public function presensiPulang()
+    {
+        $data = session('get_data');
+        $tanggal = Carbon::today()->toDateString();
+        $jam = Carbon::now()->format('H:i:s');
+
+        $siswa = Siswa::where('id_user', $data->id_user)->first();
+        $presensi = Presensi::where('siswa_id', $siswa->id_siswa)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        if (!$presensi) {
+            return redirect()->back()->with('error', 'Kamu belum melakukan presensi pagi.');
+        }
+
+        if ($presensi->jam_pulang !== null) {
+            return redirect()->back()->with('error', 'Kamu sudah melakukan presensi pulang.');
+        }
+
+        $presensi->update([
+            'jam_pulang' => $jam
+        ]);
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Presensi pulang berhasil dicatat.');
     }
 
     public function presensi(Request $request)

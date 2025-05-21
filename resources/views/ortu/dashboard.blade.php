@@ -26,11 +26,27 @@
             border-radius: 12px;
             margin-left: 6px;
         }
+        .btn-presensi {
+            display: inline-block;
+            margin-top: 1rem;
+            background-color: #0d6efd;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .btn-presensi:hover {
+            background-color: #0b5ed7;
+            color: white;
+        }
     </style>
 
     <div class="row justify-content-center mt-4">
         <div class="col-lg-12 text-center mb-4">
             <p class="text-muted">Terima kasih sudah mendampingi putra-putri Anda belajar dengan penuh semangat.</p>
+            <a href="{{ url('/ortu/presensi') }}" class="btn-presensi">Presensi Siswa
+            </a>
         </div>
 
         <!-- Rekap Kehadiran -->

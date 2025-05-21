@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Siswa;
 use App\Models\Guru;
 use Illuminate\Http\RedirectResponse;
+use Carbon\Carbon;
 
 
 
@@ -67,15 +68,6 @@ class GuruController extends Controller
         return redirect()->route('guru.dashboard')->with('success', 'Data berhasil dihapus');
     }
 
-    /*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Menampilkan halaman daftar siswa yang diampu guru yang sedang login.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    /*******  fa889a01-ba41-4520-9a03-6e1476693a06  *******/
-
-
 
     public function laporan(Request $request)
     {
@@ -114,7 +106,7 @@ class GuruController extends Controller
             return redirect('/login')->with('error', 'Silakan login terlebih dahulu');
         }
 
-        $guru =Guru::where('id_user', $get_data->id_user)->first();
+        $guru = Guru::where('id_user', $get_data->id_user)->first();
 
         if (!$guru) {
             return redirect()->back()->with('error', 'Data guru tidak ditemukan');
@@ -136,5 +128,30 @@ class GuruController extends Controller
 
         return view('guru.profile', compact('guru'));
     }
+    public function update(Request $request, $id)
+    {
+        $presensi = Presensi::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required',
+            'tanggal' => 'required|date',
+            'jam' => 'nullable|date_format:H:i',
+        ]);
+
+        // Gabungkan tanggal dan jam untuk created_at
+        if ($request->filled('jam')) {
+            $combinedDatetime = Carbon::parse($request->tanggal . ' ' . $request->jam);
+            $presensi->created_at = $combinedDatetime;
+        } else {
+            $presensi->created_at = Carbon::parse($request->tanggal . ' 00:00:00');
+        }
+
+        $presensi->status = $request->status;
+        $presensi->tanggal = $request->tanggal;
+        $presensi->save();
+
+        return response()->json(['message' => 'Data berhasil diperbarui']);
+    }
+
 
 }

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\UserModel;
 
 class LoginController extends Controller
 {
@@ -18,22 +16,35 @@ class LoginController extends Controller
 
         return view('siswa.profil', compact('data'));
     }
+
     public function login(Request $request)
     {
+        // Validasi input sederhana
+        $request->validate([
+            'nomor_pengenal' => 'required|string',
+            'password' => 'required|string',
+            'role' => 'required|string',
+        ]);
+
         $nomorPengenal = $request->nomor_pengenal;
         $password = $request->password;
+        $role = $request->role;
 
+        // Cek user berdasarkan nomor pengenal dan role
         $user = DB::table('tb_user')
             ->where('nomor_pengenal', $nomorPengenal)
-            ->where('password', $password)
-            ->select('id_user', 'fullname', 'role', 'nomor_pengenal') // Pastikan ambil id_user
+            ->where('role', $role)
+            ->select('id_user', 'fullname', 'role', 'nomor_pengenal', 'password') // Ambil password dari DB
             ->first();
 
-        if (!$user) {
-            return redirect()->route('login')->withErrors(['login' => 'Nomor pengenal atau password salah.']);
+        // Kalau belum pakai hashing password, gunakan perbandingan langsung (tidak disarankan)
+        // Jika sudah hashing, gunakan Hash::check()
+        if (!$user || $user->password !== $password) {
+            return redirect()->route('login')
+                ->withErrors(['login' => 'Nomor pengenal atau password salah.'])
+                ->withInput($request->except('password'));
         }
 
-        // Login untuk siswa
         if ($user->role === 'siswa') {
             $siswa = DB::table('siswa')
                 ->leftJoin('guru', 'siswa.id_guru', '=', 'guru.id_guru')
@@ -52,18 +63,19 @@ class LoginController extends Controller
                 ->first();
 
             if (!$siswa) {
-                return redirect()->route('login')->withErrors(['login' => 'Data siswa tidak ditemukan.']);
+                return redirect()->route('login')
+                    ->withErrors(['login' => 'Data siswa tidak ditemukan.'])
+                    ->withInput($request->except('password'));
             }
 
             session([
                 'get_data' => $siswa,
-                'role' => 'siswa'
+                'role' => 'siswa',
             ]);
 
             return redirect()->route('siswa.dashboard');
         }
 
-        // Login untuk orang tua
         if ($user->role === 'orangtua') {
             $orangTua = DB::table('orang_tua')
                 ->join('siswa', 'orang_tua.id_siswa', '=', 'siswa.id_siswa')
@@ -80,26 +92,58 @@ class LoginController extends Controller
                 ->first();
 
             if (!$orangTua) {
-                return redirect()->route('login')->withErrors(['login' => 'Data orang tua tidak ditemukan.']);
+                return redirect()->route('login')
+                    ->withErrors(['login' => 'Data orang tua tidak ditemukan.'])
+                    ->withInput($request->except('password'));
             }
 
+            // ⬇ Tambahkan eksplisit id_siswa agar aman
             session([
-                'get_data' => $orangTua,
-                'role' => 'ortu'
+                'get_data' => (object)[
+                    'id_user' => $orangTua->id_user,
+                    'role' => 'orangtua',
+                    'id_siswa' => $orangTua->id_siswa,
+                    'nama_orangtua' => $orangTua->nama_orangtua,
+                    'nama_siswa' => $orangTua->nama_siswa,
+                    'kelas' => $orangTua->kelas,
+                    'jurusan' => $orangTua->jurusan,
+                ],
+                'role' => 'ortu',
             ]);
 
             return redirect()->route('ortu.dashboard');
         }
 
-        // Tambahkan login untuk guru jika dibutuhkan
-        return redirect()->route('login')->withErrors(['login' => 'Role tidak dikenali.']);
+        // Jika role guru atau role lain bisa ditambah di sini
+        // Contoh cek role guru:
+        if ($user->role === 'guru') {
+            // Ambil data guru sesuai kebutuhan, session, redirect dst.
+            $guru = DB::table('guru')
+                ->where('id_user', $user->id_user)
+                ->first();
+
+            if (!$guru) {
+                return redirect()->route('login')
+                    ->withErrors(['login' => 'Data guru tidak ditemukan.'])
+                    ->withInput($request->except('password'));
+            }
+
+            session([
+                'get_data' => $guru,
+                'role' => 'guru',
+            ]);
+
+            return redirect()->route('guru.dashboard');
+        }
+
+        return redirect()->route('login')
+            ->withErrors(['login' => 'Role tidak dikenali.'])
+            ->withInput($request->except('password'));
     }
-
-
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        $request->session()->flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');

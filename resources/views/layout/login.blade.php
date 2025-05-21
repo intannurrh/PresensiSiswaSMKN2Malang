@@ -148,6 +148,19 @@
             box-shadow: 0 15px 35px rgba(30, 144, 255, 0.3);
         }
 
+        /* Alert error */
+        .alert-error {
+            background-color: #fdecea;
+            color: #b71c1c;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Right side image */
         .image-side {
             flex: 1;
@@ -195,6 +208,14 @@
             </div>
 
             <h1>Login</h1>
+
+            {{-- Alert login gagal --}}
+            @if (session('error'))
+                <div class="alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <form action="/check-login" method="POST" autocomplete="off">
                 @csrf
