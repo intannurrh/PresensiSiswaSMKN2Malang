@@ -89,7 +89,7 @@
                             <td>{{ \Carbon\Carbon::parse($item->tanggal ?? $item->date)->format('d-m-Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->created_at)->format('H:i:s') ?? "-"}}</td>
                             <td>{{ $item->jam_pulang ?? "-" }}</td>
-                            < <td class="text-center">
+                            <td class="text-center">
                                 @if ($item->status)
                                 <span class="badge bg-{{ 
                                     $item->status == 'Hadir' ? 'success' : 
@@ -101,12 +101,12 @@
                                 @else
                                 <span class="badge bg-secondary">Belum Hadir</span>
                                 @endif
-                                </td>
-                                <td>{{ $item->keterangan ?? "Tidak ada keterangan" }}</td>
+                            </td>
+                            <td >{{ $item->keterangan ?? "Tidak ada keterangan" }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="2">Tidak ada data kehadiran.</td>
+                            <td colspan="5">Tidak ada data kehadiran.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -143,7 +143,7 @@
                             data-bs-target="#modal1{{ $item->id_pengumuman }}"
                             style="color: #333;">
                             <span>{{ $item->judul }}</span>
-                            <span class="text-muted" ><i class="fas fa-arrow-right"></i></span> <!-- Panah kanan -->
+                            <span class="text-muted"><i class="fas fa-arrow-right"></i></span> <!-- Panah kanan -->
                         </button>
 
                     </li>
